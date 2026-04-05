@@ -1,89 +1,134 @@
-import logoDark from "./logo-dark.svg";
-import logoLight from "./logo-light.svg";
+import { useAppAuth } from "../lib/auth";
 
 export function Welcome() {
+  const { error, isAuthenticated, isConfigured, isLoading, user } = useAppAuth();
+
   return (
-    <main className="flex items-center justify-center pt-16 pb-4">
-      <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
-        <header className="flex flex-col items-center gap-9">
-          <div className="w-[500px] max-w-[100vw] p-4">
-            <img
-              src={logoLight}
-              alt="React Router"
-              className="block w-full dark:hidden"
-            />
-            <img
-              src={logoDark}
-              alt="React Router"
-              className="hidden w-full dark:block"
-            />
+    <main className="min-h-screen bg-slate-950 text-slate-50">
+      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-10">
+        <section className="rounded-3xl border border-cyan-400/20 bg-slate-900/80 p-8 shadow-2xl shadow-cyan-950/30">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+            Auth0 integration
+          </p>
+          <h1 className="mt-3 text-4xl font-bold tracking-tight">
+            Secure sign-in for Karaoke Place
+          </h1>
+          <p className="mt-3 max-w-2xl text-base text-slate-300">
+            Universal Login is now wired into your React app so users can sign in
+            without storing passwords in the frontend.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-300">
+            <span className="rounded-full bg-slate-800 px-3 py-1">React Router 7</span>
+            <span className="rounded-full bg-slate-800 px-3 py-1">Auth0 SDK</span>
+            <span className="rounded-full bg-slate-800 px-3 py-1">SSR-safe setup</span>
           </div>
-        </header>
-        <div className="max-w-[300px] w-full space-y-6 px-4">
-          <nav className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 space-y-4">
-            <p className="leading-6 text-gray-700 dark:text-gray-200 text-center">
-              What&apos;s next?
+        </section>
+
+        {!isConfigured ? (
+          <section className="rounded-3xl border border-amber-400/40 bg-amber-500/10 p-6 text-amber-50">
+            <h2 className="text-2xl font-semibold">Finish the Auth0 config</h2>
+            <p className="mt-2 text-sm text-amber-100/90">
+              Copy <code>.env.example</code> to <code>.env</code> and add your Auth0
+              tenant details before testing login.
             </p>
-            <ul>
-              {resources.map(({ href, text, icon }) => (
-                <li key={href}>
-                  <a
-                    className="group flex items-center gap-3 self-stretch p-3 leading-normal text-blue-700 hover:underline dark:text-blue-500"
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {icon}
-                    {text}
-                  </a>
+            <pre className="mt-4 overflow-x-auto rounded-2xl bg-slate-950/70 p-4 text-sm text-cyan-200">
+{`VITE_AUTH0_DOMAIN=your-tenant.us.auth0.com
+VITE_AUTH0_CLIENT_ID=your-client-id
+HOSTNAME=https://localhost:8080
+VITE_AUTH0_AUDIENCE=your-api-identifier`}
+            </pre>
+          </section>
+        ) : isLoading ? (
+          <section className="rounded-3xl border border-slate-700 bg-slate-900/80 p-6">
+            <h2 className="text-2xl font-semibold">Checking your session…</h2>
+            <p className="mt-2 text-slate-300">
+              The app is connecting to Auth0 and restoring any active login.
+            </p>
+          </section>
+        ) : isAuthenticated ? (
+          <section className="grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
+            <div className="rounded-3xl border border-emerald-400/30 bg-emerald-500/10 p-6">
+              <div className="flex items-center gap-4">
+                {user?.picture ? (
+                  <img
+                    src={user.picture}
+                    alt={user.name ?? "Authenticated user"}
+                    className="h-16 w-16 rounded-full border border-white/20 object-cover"
+                  />
+                ) : (
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-600 text-lg font-semibold">
+                    {user?.name?.slice(0, 1) ?? "U"}
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm uppercase tracking-[0.25em] text-emerald-200">
+                    Signed in
+                  </p>
+                  <h2 className="text-2xl font-semibold">{user?.name ?? "Auth0 user"}</h2>
+                  {user?.email ? <p className="text-slate-200">{user.email}</p> : null}
+                </div>
+              </div>
+
+              <a
+                href="/logout"
+                className="mt-6 inline-flex rounded-full bg-white px-4 py-2 font-medium text-slate-900 transition hover:bg-slate-200"
+              >
+                Log out
+              </a>
+            </div>
+
+            <aside className="rounded-3xl border border-slate-700 bg-slate-900/80 p-6">
+              <h3 className="text-xl font-semibold">Next steps</h3>
+              <ul className="mt-3 space-y-2 text-sm text-slate-300">
+                <li>• Protect app routes based on <code>isAuthenticated</code>.</li>
+                <li>• Use <code>getAccessTokenSilently()</code> for secured API calls.</li>
+                <li>• Add your production callback and logout URLs in Auth0.</li>
+              </ul>
+            </aside>
+          </section>
+        ) : (
+          <section className="grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
+            <div className="rounded-3xl border border-slate-700 bg-slate-900/80 p-6">
+              <h2 className="text-2xl font-semibold">Sign in with Auth0</h2>
+              <p className="mt-2 text-slate-300">
+                Use Auth0 Universal Login to authenticate users and return them to
+                this app securely.
+              </p>
+              <a
+                href="/login"
+                className="mt-6 inline-flex rounded-full bg-cyan-400 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-300"
+              >
+                Log in
+              </a>
+            </div>
+
+            <aside className="rounded-3xl border border-slate-700 bg-slate-900/80 p-6">
+              <h3 className="text-xl font-semibold">Auth0 checklist</h3>
+              <ul className="mt-3 space-y-2 text-sm text-slate-300">
+                <li>
+                  • Allowed Callback URLs: <code>https://localhost:8080</code>,{" "}
+                  <code>https://127.0.0.1:8080</code>
                 </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
+                <li>
+                  • Allowed Logout URLs: <code>https://localhost:8080</code>,{" "}
+                  <code>https://127.0.0.1:8080</code>
+                </li>
+                <li>
+                  • Allowed Web Origins: <code>https://localhost:8080</code>,{" "}
+                  <code>https://127.0.0.1:8080</code>
+                </li>
+                <li>• Application type: <code>Single Page Application</code></li>
+              </ul>
+            </aside>
+          </section>
+        )}
+
+        {error ? (
+          <p className="rounded-2xl border border-red-400/40 bg-red-500/10 p-4 text-sm text-red-100">
+            {error}
+          </p>
+        ) : null}
       </div>
     </main>
   );
 }
-
-const resources = [
-  {
-    href: "https://reactrouter.com/docs",
-    text: "React Router Docs",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        className="stroke-gray-600 group-hover:stroke-current dark:stroke-gray-300"
-      >
-        <path
-          d="M9.99981 10.0751V9.99992M17.4688 17.4688C15.889 19.0485 11.2645 16.9853 7.13958 12.8604C3.01467 8.73546 0.951405 4.11091 2.53116 2.53116C4.11091 0.951405 8.73546 3.01467 12.8604 7.13958C16.9853 11.2645 19.0485 15.889 17.4688 17.4688ZM2.53132 17.4688C0.951566 15.8891 3.01483 11.2645 7.13974 7.13963C11.2647 3.01471 15.8892 0.951453 17.469 2.53121C19.0487 4.11096 16.9854 8.73551 12.8605 12.8604C8.73562 16.9853 4.11107 19.0486 2.53132 17.4688Z"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-  },
-  {
-    href: "https://rmx.as/discord",
-    text: "Join Discord",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="20"
-        viewBox="0 0 24 20"
-        fill="none"
-        className="stroke-gray-600 group-hover:stroke-current dark:stroke-gray-300"
-      >
-        <path
-          d="M15.0686 1.25995L14.5477 1.17423L14.2913 1.63578C14.1754 1.84439 14.0545 2.08275 13.9422 2.31963C12.6461 2.16488 11.3406 2.16505 10.0445 2.32014C9.92822 2.08178 9.80478 1.84975 9.67412 1.62413L9.41449 1.17584L8.90333 1.25995C7.33547 1.51794 5.80717 1.99419 4.37748 2.66939L4.19 2.75793L4.07461 2.93019C1.23864 7.16437 0.46302 11.3053 0.838165 15.3924L0.868838 15.7266L1.13844 15.9264C2.81818 17.1714 4.68053 18.1233 6.68582 18.719L7.18892 18.8684L7.50166 18.4469C7.96179 17.8268 8.36504 17.1824 8.709 16.4944L8.71099 16.4904C10.8645 17.0471 13.128 17.0485 15.2821 16.4947C15.6261 17.1826 16.0293 17.8269 16.4892 18.4469L16.805 18.8725L17.3116 18.717C19.3056 18.105 21.1876 17.1751 22.8559 15.9238L23.1224 15.724L23.1528 15.3923C23.5873 10.6524 22.3579 6.53306 19.8947 2.90714L19.7759 2.73227L19.5833 2.64518C18.1437 1.99439 16.6386 1.51826 15.0686 1.25995ZM16.6074 10.7755L16.6074 10.7756C16.5934 11.6409 16.0212 12.1444 15.4783 12.1444C14.9297 12.1444 14.3493 11.6173 14.3493 10.7877C14.3493 9.94885 14.9378 9.41192 15.4783 9.41192C16.0471 9.41192 16.6209 9.93851 16.6074 10.7755ZM8.49373 12.1444C7.94513 12.1444 7.36471 11.6173 7.36471 10.7877C7.36471 9.94885 7.95323 9.41192 8.49373 9.41192C9.06038 9.41192 9.63892 9.93712 9.6417 10.7815C9.62517 11.6239 9.05462 12.1444 8.49373 12.1444Z"
-          strokeWidth="1.5"
-        />
-      </svg>
-    ),
-  },
-];

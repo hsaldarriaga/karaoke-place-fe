@@ -32,7 +32,8 @@ Start the development server with HMR:
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+Your application will be available at `https://localhost:8080`.
+The first visit may show a browser warning because the local certificate is self-signed.
 
 ## Building for Production
 
