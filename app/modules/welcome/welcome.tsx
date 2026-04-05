@@ -1,7 +1,8 @@
 import { useAppAuth } from "../lib/auth";
 
 export function Welcome() {
-  const { error, isAuthenticated, isConfigured, isLoading, user } = useAppAuth();
+  const { error, isAuthenticated, isConfigured, isLoading, user } =
+    useAppAuth();
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
@@ -14,13 +15,19 @@ export function Welcome() {
             Secure sign-in for Karaoke Place
           </h1>
           <p className="mt-3 max-w-2xl text-base text-slate-300">
-            Universal Login is now wired into your React app so users can sign in
-            without storing passwords in the frontend.
+            Universal Login is now wired into your React app so users can sign
+            in without storing passwords in the frontend.
           </p>
           <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-300">
-            <span className="rounded-full bg-slate-800 px-3 py-1">React Router 7</span>
-            <span className="rounded-full bg-slate-800 px-3 py-1">Auth0 SDK</span>
-            <span className="rounded-full bg-slate-800 px-3 py-1">SSR-safe setup</span>
+            <span className="rounded-full bg-slate-800 px-3 py-1">
+              React Router 7
+            </span>
+            <span className="rounded-full bg-slate-800 px-3 py-1">
+              Auth0 SDK
+            </span>
+            <span className="rounded-full bg-slate-800 px-3 py-1">
+              SSR-safe setup
+            </span>
           </div>
         </section>
 
@@ -28,11 +35,11 @@ export function Welcome() {
           <section className="rounded-3xl border border-amber-400/40 bg-amber-500/10 p-6 text-amber-50">
             <h2 className="text-2xl font-semibold">Finish the Auth0 config</h2>
             <p className="mt-2 text-sm text-amber-100/90">
-              Copy <code>.env.example</code> to <code>.env</code> and add your Auth0
-              tenant details before testing login.
+              Copy <code>.env.example</code> to <code>.env</code> and add your
+              Auth0 tenant details before testing login.
             </p>
             <pre className="mt-4 overflow-x-auto rounded-2xl bg-slate-950/70 p-4 text-sm text-cyan-200">
-{`VITE_AUTH0_DOMAIN=your-tenant.us.auth0.com
+              {`VITE_AUTH0_DOMAIN=your-tenant.us.auth0.com
 VITE_AUTH0_CLIENT_ID=your-client-id
 HOSTNAME=https://localhost:8080
 VITE_AUTH0_AUDIENCE=your-api-identifier`}
@@ -64,8 +71,12 @@ VITE_AUTH0_AUDIENCE=your-api-identifier`}
                   <p className="text-sm uppercase tracking-[0.25em] text-emerald-200">
                     Signed in
                   </p>
-                  <h2 className="text-2xl font-semibold">{user?.name ?? "Auth0 user"}</h2>
-                  {user?.email ? <p className="text-slate-200">{user.email}</p> : null}
+                  <h2 className="text-2xl font-semibold">
+                    {user?.name ?? "Auth0 user"}
+                  </h2>
+                  {user?.email ? (
+                    <p className="text-slate-200">{user.email}</p>
+                  ) : null}
                 </div>
               </div>
 
@@ -80,9 +91,16 @@ VITE_AUTH0_AUDIENCE=your-api-identifier`}
             <aside className="rounded-3xl border border-slate-700 bg-slate-900/80 p-6">
               <h3 className="text-xl font-semibold">Next steps</h3>
               <ul className="mt-3 space-y-2 text-sm text-slate-300">
-                <li>• Protect app routes based on <code>isAuthenticated</code>.</li>
-                <li>• Use <code>getAccessTokenSilently()</code> for secured API calls.</li>
-                <li>• Add your production callback and logout URLs in Auth0.</li>
+                <li>
+                  • Protect app routes based on <code>isAuthenticated</code>.
+                </li>
+                <li>
+                  • Use <code>getAccessTokenSilently()</code> for secured API
+                  calls.
+                </li>
+                <li>
+                  • Add your production callback and logout URLs in Auth0.
+                </li>
               </ul>
             </aside>
           </section>
@@ -91,8 +109,8 @@ VITE_AUTH0_AUDIENCE=your-api-identifier`}
             <div className="rounded-3xl border border-slate-700 bg-slate-900/80 p-6">
               <h2 className="text-2xl font-semibold">Sign in with Auth0</h2>
               <p className="mt-2 text-slate-300">
-                Use Auth0 Universal Login to authenticate users and return them to
-                this app securely.
+                Use Auth0 Universal Login to authenticate users and return them
+                to this app securely.
               </p>
               <a
                 href="/login"
@@ -117,7 +135,9 @@ VITE_AUTH0_AUDIENCE=your-api-identifier`}
                   • Allowed Web Origins: <code>https://localhost:8080</code>,{" "}
                   <code>https://127.0.0.1:8080</code>
                 </li>
-                <li>• Application type: <code>Single Page Application</code></li>
+                <li>
+                  • Application type: <code>Single Page Application</code>
+                </li>
               </ul>
             </aside>
           </section>

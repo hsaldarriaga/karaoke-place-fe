@@ -1,7 +1,6 @@
-import type { Route } from "./+types/_index";
-import { Welcome } from "../welcome/welcome";
+import { Welcome } from "../../modules/welcome/welcome";
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Karaoke Place | Auth0 Login" },
     {

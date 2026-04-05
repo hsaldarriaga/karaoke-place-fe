@@ -5,6 +5,7 @@ import {
   useAuth0,
 } from "@auth0/auth0-react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { setTokenGetter } from "./api-client";
 
 type AuthContextValue = {
   isConfigured: boolean;
@@ -12,12 +13,18 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   user?: User;
   error?: string;
-  login: () => Promise<void>;
+  login: (returnTo?: string) => Promise<void>;
   logoutUser: () => void;
 };
 
-const noopAsync = async () => undefined;
+const DEFAULT_RETURN_TO = "/";
+
+const noopAsync = async (_returnTo?: string) => undefined;
 const noop = () => undefined;
+
+function getSafeReturnTo(returnTo?: string) {
+  return returnTo?.startsWith("/") ? returnTo : DEFAULT_RETURN_TO;
+}
 
 const AuthContext = createContext<AuthContextValue>({
   isConfigured: false,
@@ -34,8 +41,26 @@ function AuthContextBridge({
   children: React.ReactNode;
   hostname?: string;
 }) {
-  const { error, isAuthenticated, isLoading, loginWithRedirect, logout, user } =
-    useAuth0();
+  const {
+    error,
+    isAuthenticated,
+    isLoading,
+    loginWithRedirect,
+    logout,
+    user,
+    getAccessTokenSilently,
+  } = useAuth0();
+
+  // Register / unregister the token getter so the axios interceptor can
+  // attach a Bearer token to every outgoing request.
+  useEffect(() => {
+    if (isAuthenticated) {
+      setTokenGetter(() => getAccessTokenSilently());
+    } else {
+      setTokenGetter(null);
+    }
+    return () => setTokenGetter(null);
+  }, [isAuthenticated, getAccessTokenSilently]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -44,20 +69,28 @@ function AuthContextBridge({
       isAuthenticated,
       user,
       error: error?.message,
-      login: () =>
+      login: (returnTo?: string) =>
         loginWithRedirect({
           appState: {
-            returnTo: hostname
+            returnTo: getSafeReturnTo(returnTo),
           },
         }),
       logoutUser: () =>
         logout({
           logoutParams: {
-            returnTo: hostname
+            returnTo: hostname,
           },
         }),
     }),
-    [error, hostname, isAuthenticated, isLoading, loginWithRedirect, logout, user],
+    [
+      error,
+      hostname,
+      isAuthenticated,
+      isLoading,
+      loginWithRedirect,
+      logout,
+      user,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -71,6 +104,7 @@ export function AppAuthProvider({ children }: { children: React.ReactNode }) {
   const hostname = import.meta.env.VITE_HOSTNAME;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasMounted(true);
   }, []);
 
@@ -101,10 +135,9 @@ export function AppAuthProvider({ children }: { children: React.ReactNode }) {
         audience,
       }}
       onRedirectCallback={(appState?: AppState) => {
-        const nextPath =
-          typeof appState?.returnTo === "string"
-            ? appState.returnTo
-            : hostname;
+        const nextPath = getSafeReturnTo(
+          typeof appState?.returnTo === "string" ? appState.returnTo : undefined,
+        );
 
         window.history.replaceState({}, document.title, nextPath);
       }}

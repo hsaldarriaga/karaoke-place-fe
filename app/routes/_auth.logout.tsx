@@ -4,7 +4,7 @@ import { AuthActionState } from "../components/auth-action-state";
 import { useAppAuth } from "../lib/auth";
 import type { Route } from "./+types/logout";
 
-export function meta({}: Route.MetaArgs) {
+export function meta(_args: Route.MetaArgs) {
   return [
     { title: "Logout | Karaoke Place" },
     {
