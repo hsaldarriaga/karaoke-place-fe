@@ -15,26 +15,17 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export default function LogoutPage() {
-  const { error, isConfigured, isLoading, logoutUser } = useAppAuth();
+  const { error, isLoading, logoutUser } = useAppAuth();
   const hasTriggered = useRef(false);
 
   useEffect(() => {
-    if (hasTriggered.current || !isConfigured || isLoading) {
+    if (hasTriggered.current || isLoading) {
       return;
     }
 
     hasTriggered.current = true;
     logoutUser();
-  }, [isConfigured, isLoading, logoutUser]);
-
-  if (!isConfigured) {
-    return (
-      <AuthActionState
-        title="Auth0 is not configured"
-        description="Set your Auth0 variables in .env before using the logout page."
-      />
-    );
-  }
+  }, [isLoading, logoutUser]);
 
   if (error) {
     return <AuthActionState title="Logout failed" description={error} />;

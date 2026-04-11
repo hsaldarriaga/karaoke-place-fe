@@ -1,9 +1,9 @@
+import { HugeiconsIcon } from "@hugeicons/react";
 import { Link } from "react-router";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
@@ -13,10 +13,6 @@ import {
 } from "~/components/ui/sidebar";
 
 import { NAV_ITEMS } from "../constants";
-import { useCurrentEvents } from "../hooks/use-current-events";
-import { useCurrentUser } from "../hooks/use-current-user";
-import { useMyEvents } from "../hooks/use-my-events";
-import { useMySongs } from "../hooks/use-my-songs";
 import type { HomeSection } from "../types";
 
 type HomeSidebarProps = {
@@ -24,26 +20,18 @@ type HomeSidebarProps = {
 };
 
 export function HomeSidebar({ activeSection }: HomeSidebarProps) {
-  const { allEvents, totalEvents } = useCurrentEvents();
-  const { currentUserId } = useCurrentUser();
-  const myEvents = useMyEvents(allEvents, currentUserId);
-  const mySongsQuery = useMySongs(currentUserId);
-
-  const myEventsCount = myEvents.length;
-  const mySongsCount = (mySongsQuery.data ?? []).length;
-
   return (
     <Sidebar
       collapsible="icon"
       variant="inset"
-      className="border-none [&_[data-sidebar=sidebar]]:border-r [&_[data-sidebar=sidebar]]:border-slate-800 [&_[data-sidebar=sidebar]]:bg-slate-900/95"
+      className="border-none [&_[data-sidebar=sidebar]]:border-r [&_[data-sidebar=sidebar]]:border-zinc-200 [&_[data-sidebar=sidebar]]:bg-white"
     >
-      <SidebarHeader className="gap-3 p-4">
-        <div className="rounded-2xl border border-cyan-400/20 bg-slate-950/70 p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-cyan-300">
+      <SidebarHeader className="gap-3 p-4 group-data-[collapsible=icon]:hidden">
+        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500">
             Karaoke Place
           </p>
-          <p className="mt-2 text-sm text-slate-200">
+          <p className="mt-2 text-sm text-zinc-700">
             Browse and manage your karaoke plans.
           </p>
         </div>
@@ -51,7 +39,7 @@ export function HomeSidebar({ activeSection }: HomeSidebarProps) {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-slate-400">
+          <SidebarGroupLabel className="text-zinc-500">
             Browse
           </SidebarGroupLabel>
           <SidebarMenu>
@@ -61,12 +49,17 @@ export function HomeSidebar({ activeSection }: HomeSidebarProps) {
                   asChild
                   isActive={activeSection === item.key}
                   tooltip={item.label}
-                  className="h-auto items-start px-3 py-3"
+                  className="h-auto items-start rounded-xl px-3 py-3 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center"
                 >
-                  <Link to={item.to}>
-                    <span className="text-sm font-semibold">{item.label}</span>
-                    <span className="text-xs text-slate-400">
-                      {item.description}
+                  <Link to={item.to} className="gap-3">
+                    <HugeiconsIcon icon={item.icon} strokeWidth={2} />
+                    <span className="flex min-w-0 flex-col text-left group-data-[collapsible=icon]:hidden">
+                      <span className="text-sm font-semibold">
+                        {item.label}
+                      </span>
+                      <span className="text-xs text-zinc-500">
+                        {item.description}
+                      </span>
                     </span>
                   </Link>
                 </SidebarMenuButton>
@@ -75,23 +68,6 @@ export function HomeSidebar({ activeSection }: HomeSidebarProps) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="p-4">
-        <div className="rounded-2xl bg-slate-950/70 p-4 text-sm text-slate-300">
-          <p className="font-medium text-slate-100">Quick summary</p>
-          <ul className="mt-3 space-y-2">
-            <li>• {totalEvents} active events available</li>
-            <li>
-              • {myEventsCount} event{myEventsCount === 1 ? "" : "s"} linked to
-              you
-            </li>
-            <li>
-              • {mySongsCount} saved song
-              {mySongsCount === 1 ? "" : "s"}
-            </li>
-          </ul>
-        </div>
-      </SidebarFooter>
     </Sidebar>
   );
 }

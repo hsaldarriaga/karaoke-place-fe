@@ -2,7 +2,6 @@ import type { UseQueryResult } from "@tanstack/react-query";
 
 import type { SongModel, UserModel } from "~/gen/models";
 
-import { normalizeId } from "../utils";
 import { EmptyState } from "./empty-state";
 
 type MySongsSectionProps = {
@@ -21,8 +20,8 @@ export function MySongsSection({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold text-white">My songs</h2>
-        <p className="mt-1 text-sm text-slate-300">
+        <h2 className="text-2xl font-semibold text-zinc-950">My songs</h2>
+        <p className="mt-1 text-sm text-zinc-600">
           Your preferred karaoke tracks from the API.
         </p>
       </div>
@@ -32,7 +31,7 @@ export function MySongsSection({
           {Array.from({ length: 4 }).map((_, index) => (
             <div
               key={index}
-              className="h-28 animate-pulse rounded-3xl border border-slate-800 bg-slate-900/70"
+              className="h-28 animate-pulse rounded-3xl border border-zinc-200 bg-white"
             />
           ))}
         </div>
@@ -68,20 +67,20 @@ export function MySongsSection({
         <div className="grid gap-3 md:grid-cols-2">
           {songs.map((song) => (
             <article
-              key={normalizeId(song.id) || `${song.title}-${song.artist}`}
-              className="rounded-3xl border border-slate-800 bg-slate-900/85 p-5"
+              key={song.id.toString()}
+              className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm shadow-black/5"
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-zinc-500">
                 Preferred song
               </p>
-              <h3 className="mt-2 text-lg font-semibold text-white">
+              <h3 className="mt-2 text-lg font-semibold text-zinc-950">
                 {song.title ?? "Untitled track"}
               </h3>
-              <p className="mt-1 text-sm text-slate-300">
+              <p className="mt-1 text-sm text-zinc-600">
                 {song.artist ?? "Unknown artist"}
               </p>
               {song.externalId ? (
-                <p className="mt-3 text-xs text-slate-400">
+                <p className="mt-3 text-xs text-zinc-500">
                   External ID: {song.externalId}
                 </p>
               ) : null}

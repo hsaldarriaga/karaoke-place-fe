@@ -2,6 +2,7 @@ import axios from "axios";
 
 type TokenGetter = () => Promise<string>;
 
+const LOGIN_PATHS = new Set(["/login", "/logout"]);
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
 
 if (apiBaseUrl) {
@@ -9,6 +10,24 @@ if (apiBaseUrl) {
 }
 
 let getToken: TokenGetter | null = null;
+let isRedirectingToLogin = false;
+
+function redirectToLogin() {
+  if (typeof window === "undefined" || isRedirectingToLogin) {
+    return;
+  }
+
+  const { hash, pathname, search } = window.location;
+
+  if (LOGIN_PATHS.has(pathname)) {
+    return;
+  }
+
+  isRedirectingToLogin = true;
+
+  const returnTo = `${pathname}${search}${hash}` || "/";
+  window.location.replace(`/login?returnTo=${encodeURIComponent(returnTo)}`);
+}
 
 /**
  * Called from AuthContextBridge to provide the Auth0 getAccessTokenSilently
@@ -26,10 +45,22 @@ axios.interceptors.request.use(async (config) => {
     try {
       const token = await getToken();
       config.headers.Authorization = `Bearer ${token}`;
-    } catch {
-      // Token retrieval failed (e.g. session expired) – let the request
-      // proceed without the header so the server can return a 401.
+    } catch (error) {
+      console.error("Failed to get access token, redirecting to login", error);
+      redirectToLogin();
     }
   }
+
   return config;
 });
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      redirectToLogin();
+    }
+
+    return Promise.reject(error);
+  },
+);

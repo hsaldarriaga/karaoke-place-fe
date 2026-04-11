@@ -1,7 +1,3 @@
-export function normalizeId(value: unknown): string {
-  return value == null ? "" : String(value);
-}
-
 function isValidDate(value: Date | null): value is Date {
   return value instanceof Date && !Number.isNaN(value.getTime());
 }

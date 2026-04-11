@@ -6,7 +6,8 @@ export function useMySongs(currentUserId?: number) {
   return useQuery({
     queryKey: ["my-songs", currentUserId],
     enabled: currentUserId != null,
-    queryFn: async () => (await getApiUsersIdPreferredSongs(currentUserId!)).data,
+    queryFn: async () =>
+      (await getApiUsersIdPreferredSongs(currentUserId!)).data,
     staleTime: 60 * 1000,
   });
 }

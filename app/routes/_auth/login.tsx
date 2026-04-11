@@ -16,29 +16,19 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export default function LoginPage() {
-  const { error, isAuthenticated, isConfigured, isLoading, login } =
-    useAppAuth();
+  const { error, isAuthenticated, isLoading, login } = useAppAuth();
   const [searchParams] = useSearchParams();
   const hasTriggered = useRef(false);
   const returnTo = searchParams.get("returnTo") ?? "/";
 
   useEffect(() => {
-    if (hasTriggered.current || !isConfigured || isLoading || isAuthenticated) {
+    if (hasTriggered.current || isLoading || isAuthenticated) {
       return;
     }
 
     hasTriggered.current = true;
     void login(returnTo);
-  }, [isAuthenticated, isConfigured, isLoading, login, returnTo]);
-
-  if (!isConfigured) {
-    return (
-      <AuthActionState
-        title="Auth0 is not configured"
-        description="Set your Auth0 variables in .env before using the login page."
-      />
-    );
-  }
+  }, [isAuthenticated, isLoading, login, returnTo]);
 
   if (error) {
     return <AuthActionState title="Login failed" description={error} />;

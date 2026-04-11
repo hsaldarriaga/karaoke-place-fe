@@ -7,7 +7,6 @@ import type {
 import { Button } from "~/components/ui/button";
 
 import type { CurrentEventsPage, EnrichedKaraokeEvent } from "../types";
-import { normalizeId } from "../utils";
 import { EmptyState } from "./empty-state";
 import { EventCard } from "./event-card";
 
@@ -26,12 +25,14 @@ export function CurrentEventsSection({
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-semibold text-white">Current events</h2>
-          <p className="mt-1 text-sm text-slate-300">
+          <h2 className="text-2xl font-semibold text-zinc-950">
+            Current events
+          </h2>
+          <p className="mt-1 text-sm text-zinc-600">
             Explore active karaoke plans and see what everyone is queuing up.
           </p>
         </div>
-        <span className="rounded-full bg-slate-900 px-3 py-1 text-sm text-slate-300">
+        <span className="rounded-full border border-zinc-200 bg-zinc-950 px-3 py-1 text-sm font-medium text-white">
           {allEvents.length} loaded
         </span>
       </div>
@@ -41,7 +42,7 @@ export function CurrentEventsSection({
           {Array.from({ length: 4 }).map((_, index) => (
             <div
               key={index}
-              className="h-64 animate-pulse rounded-3xl border border-slate-800 bg-slate-900/70"
+              className="h-64 animate-pulse rounded-3xl border border-zinc-200 bg-white"
             />
           ))}
         </div>
@@ -63,12 +64,7 @@ export function CurrentEventsSection({
         <>
           <div className="grid gap-4 xl:grid-cols-2">
             {allEvents.map((event) => (
-              <EventCard
-                key={
-                  normalizeId(event.id) || `${event.name}-${event.startTime}`
-                }
-                event={event}
-              />
+              <EventCard key={event.id.toString()} event={event} />
             ))}
           </div>
 
@@ -78,7 +74,7 @@ export function CurrentEventsSection({
           >
             {query.hasNextPage ? (
               <>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-zinc-500">
                   {query.isFetchingNextPage
                     ? "Loading more events..."
                     : "Scroll down or use the button to load more."}
@@ -93,7 +89,7 @@ export function CurrentEventsSection({
                 </Button>
               </>
             ) : (
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-zinc-500">
                 You have reached the end of the list.
               </p>
             )}

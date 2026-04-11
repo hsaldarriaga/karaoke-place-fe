@@ -27,7 +27,7 @@ export function HomeLayout() {
   return (
     <SidebarProvider
       defaultOpen
-      className="min-h-screen bg-slate-950 text-slate-50"
+      className="min-h-screen bg-zinc-50 text-zinc-950"
     >
       <HomeSidebar activeSection={activeSection} />
 

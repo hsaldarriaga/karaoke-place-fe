@@ -3,7 +3,6 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import type { UserModel } from "~/gen/models";
 
 import type { EnrichedKaraokeEvent } from "../types";
-import { normalizeId } from "../utils";
 import { EmptyState } from "./empty-state";
 import { EventCard } from "./event-card";
 
@@ -21,8 +20,8 @@ export function MyEventsSection({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold text-white">My events</h2>
-        <p className="mt-1 text-sm text-slate-300">
+        <h2 className="text-2xl font-semibold text-zinc-950">My events</h2>
+        <p className="mt-1 text-sm text-zinc-600">
           Events you created or already joined.
         </p>
       </div>
@@ -54,10 +53,7 @@ export function MyEventsSection({
       ) : (
         <div className="grid gap-4 xl:grid-cols-2">
           {myEvents.map((event) => (
-            <EventCard
-              key={normalizeId(event.id) || `${event.name}-${event.startTime}`}
-              event={event}
-            />
+            <EventCard key={event.id.toString()} event={event} />
           ))}
         </div>
       )}

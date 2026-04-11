@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from "react-router";
 
 import { AuthActionState } from "~/components/auth-action-state";
-import { HomeLayout } from "~/modules/home/home-page";
+import { HomeLayout } from "~/modules/home/layout";
 import { useAppAuth } from "~/lib/auth";
 
 export default function ProtectedLayout() {
