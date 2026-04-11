@@ -2,6 +2,12 @@ import axios from "axios";
 
 type TokenGetter = () => Promise<string>;
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+
+if (apiBaseUrl) {
+  axios.defaults.baseURL = apiBaseUrl;
+}
+
 let getToken: TokenGetter | null = null;
 
 /**

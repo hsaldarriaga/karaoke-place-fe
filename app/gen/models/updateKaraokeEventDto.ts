@@ -5,7 +5,6 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { UpdateKaraokeEventDtoDescription } from "./updateKaraokeEventDtoDescription";
-import type { UpdateKaraokeEventDtoCreatedByUserId } from "./updateKaraokeEventDtoCreatedByUserId";
 
 export interface UpdateKaraokeEventDto {
   /**
@@ -28,7 +27,6 @@ export interface UpdateKaraokeEventDto {
   /**
    * @minimum 1
    * @maximum 2147483647
-   * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  createdByUserId?: UpdateKaraokeEventDtoCreatedByUserId;
+  createdByUserId?: number;
 }

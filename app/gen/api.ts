@@ -29,14 +29,22 @@ import type {
   CreateSongDto,
   CreateUserDto,
   EnterKaraokeEventDto,
-  EventParticipantModel,
+  EventParticipantsByEventModel,
   GetApiKaraokeEventsParams,
+  GetApiKaraokeEventsParticipantsParams,
+  GetApiKaraokeEventsSongProposalsParams,
+  GetApiSongsByEventParams,
+  GetApiSongsByIdsParams,
+  GetApiSongsByUserUserIdParams,
+  GetApiUsersParams,
   HealthCheck,
   KaraokeEvent,
   PagedResultOfKaraokeEvent,
+  PagedResultOfSongModel,
   RespondInvitationDto,
   SongModel,
-  SongProposalModel,
+  SongProposalsByEventModel,
+  SongsByEventModel,
   UpdateKaraokeEventDto,
   UpdateUserDto,
   UserModel,
@@ -168,31 +176,38 @@ export function useGet<
 }
 
 export const getApiUsers = (
+  params?: GetApiUsersParams,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<UserModel[]>> => {
-  return axios.get(`/api/Users`, options);
+  return axios.get(`/api/Users`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
 };
 
-export const getGetApiUsersQueryKey = () => {
-  return [`/api/Users`] as const;
+export const getGetApiUsersQueryKey = (params?: GetApiUsersParams) => {
+  return [`/api/Users`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetApiUsersQueryOptions = <
   TData = Awaited<ReturnType<typeof getApiUsers>>,
   TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getApiUsers>>, TError, TData>
-  >;
-  axios?: AxiosRequestConfig;
-}) => {
+>(
+  params?: GetApiUsersParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiUsers>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+) => {
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiUsersQueryKey();
+  const queryKey = queryOptions?.queryKey ?? getGetApiUsersQueryKey(params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiUsers>>> = ({
     signal,
-  }) => getApiUsers({ signal, ...axiosOptions });
+  }) => getApiUsers(params, { signal, ...axiosOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getApiUsers>>,
@@ -210,6 +225,7 @@ export function useGetApiUsers<
   TData = Awaited<ReturnType<typeof getApiUsers>>,
   TError = AxiosError<unknown>,
 >(
+  params: undefined | GetApiUsersParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiUsers>>, TError, TData>
@@ -232,6 +248,7 @@ export function useGetApiUsers<
   TData = Awaited<ReturnType<typeof getApiUsers>>,
   TError = AxiosError<unknown>,
 >(
+  params?: GetApiUsersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiUsers>>, TError, TData>
@@ -254,6 +271,7 @@ export function useGetApiUsers<
   TData = Awaited<ReturnType<typeof getApiUsers>>,
   TError = AxiosError<unknown>,
 >(
+  params?: GetApiUsersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiUsers>>, TError, TData>
@@ -269,6 +287,7 @@ export function useGetApiUsers<
   TData = Awaited<ReturnType<typeof getApiUsers>>,
   TError = AxiosError<unknown>,
 >(
+  params?: GetApiUsersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiUsers>>, TError, TData>
@@ -279,7 +298,7 @@ export function useGetApiUsers<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetApiUsersQueryOptions(options);
+  const queryOptions = getGetApiUsersQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -363,6 +382,206 @@ export const usePostApiUsers = <
   TContext
 > => {
   const mutationOptions = getPostApiUsersMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+export const getApiUsersMe = (
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<UserModel>> => {
+  return axios.get(`/api/Users/me`, options);
+};
+
+export const getGetApiUsersMeQueryKey = () => {
+  return [`/api/Users/me`] as const;
+};
+
+export const getGetApiUsersMeQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiUsersMe>>,
+  TError = AxiosError<unknown>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getApiUsersMe>>, TError, TData>
+  >;
+  axios?: AxiosRequestConfig;
+}) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetApiUsersMeQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiUsersMe>>> = ({
+    signal,
+  }) => getApiUsersMe({ signal, ...axiosOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiUsersMe>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetApiUsersMeQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiUsersMe>>
+>;
+export type GetApiUsersMeQueryError = AxiosError<unknown>;
+
+export function useGetApiUsersMe<
+  TData = Awaited<ReturnType<typeof getApiUsersMe>>,
+  TError = AxiosError<unknown>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiUsersMe>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiUsersMe>>,
+          TError,
+          Awaited<ReturnType<typeof getApiUsersMe>>
+        >,
+        "initialData"
+      >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApiUsersMe<
+  TData = Awaited<ReturnType<typeof getApiUsersMe>>,
+  TError = AxiosError<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiUsersMe>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiUsersMe>>,
+          TError,
+          Awaited<ReturnType<typeof getApiUsersMe>>
+        >,
+        "initialData"
+      >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApiUsersMe<
+  TData = Awaited<ReturnType<typeof getApiUsersMe>>,
+  TError = AxiosError<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiUsersMe>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetApiUsersMe<
+  TData = Awaited<ReturnType<typeof getApiUsersMe>>,
+  TError = AxiosError<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiUsersMe>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetApiUsersMeQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const putApiUsersMe = (
+  updateUserDto: UpdateUserDto,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  return axios.put(`/api/Users/me`, updateUserDto, options);
+};
+
+export const getPutApiUsersMeMutationOptions = <
+  TError = AxiosError<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putApiUsersMe>>,
+    TError,
+    { data: UpdateUserDto },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putApiUsersMe>>,
+  TError,
+  { data: UpdateUserDto },
+  TContext
+> => {
+  const mutationKey = ["putApiUsersMe"];
+  const { mutation: mutationOptions, axios: axiosOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, axios: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putApiUsersMe>>,
+    { data: UpdateUserDto }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return putApiUsersMe(data, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutApiUsersMeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putApiUsersMe>>
+>;
+export type PutApiUsersMeMutationBody = UpdateUserDto;
+export type PutApiUsersMeMutationError = AxiosError<unknown>;
+
+export const usePutApiUsersMe = <
+  TError = AxiosError<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof putApiUsersMe>>,
+      TError,
+      { data: UpdateUserDto },
+      TContext
+    >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof putApiUsersMe>>,
+  TError,
+  { data: UpdateUserDto },
+  TContext
+> => {
+  const mutationOptions = getPutApiUsersMeMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -663,82 +882,6 @@ export function useGetApiUsersIdPreferredSongs<
   return query;
 }
 
-export const putApiUsersMe = (
-  updateUserDto: UpdateUserDto,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<void>> => {
-  return axios.put(`/api/Users/me`, updateUserDto, options);
-};
-
-export const getPutApiUsersMeMutationOptions = <
-  TError = AxiosError<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putApiUsersMe>>,
-    TError,
-    { data: UpdateUserDto },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof putApiUsersMe>>,
-  TError,
-  { data: UpdateUserDto },
-  TContext
-> => {
-  const mutationKey = ["putApiUsersMe"];
-  const { mutation: mutationOptions, axios: axiosOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof putApiUsersMe>>,
-    { data: UpdateUserDto }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return putApiUsersMe(data, axiosOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type PutApiUsersMeMutationResult = NonNullable<
-  Awaited<ReturnType<typeof putApiUsersMe>>
->;
-export type PutApiUsersMeMutationBody = UpdateUserDto;
-export type PutApiUsersMeMutationError = AxiosError<unknown>;
-
-export const usePutApiUsersMe = <
-  TError = AxiosError<unknown>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof putApiUsersMe>>,
-      TError,
-      { data: UpdateUserDto },
-      TContext
-    >;
-    axios?: AxiosRequestConfig;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof putApiUsersMe>>,
-  TError,
-  { data: UpdateUserDto },
-  TContext
-> => {
-  const mutationOptions = getPutApiUsersMeMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
 export const postApiUsersMePreferredSongs = (
   addPreferredSongDto: AddPreferredSongDto,
   options?: AxiosRequestConfig,
@@ -898,58 +1041,77 @@ export const useDeleteApiUsersMePreferredSongsSongId = <
   return useMutation(mutationOptions, queryClient);
 };
 
-export const getApiSongs = (
+export const getApiSongsByIds = (
+  params?: GetApiSongsByIdsParams,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<SongModel[]>> => {
-  return axios.get(`/api/Songs`, options);
+  return axios.get(`/api/Songs/by-ids`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
 };
 
-export const getGetApiSongsQueryKey = () => {
-  return [`/api/Songs`] as const;
+export const getGetApiSongsByIdsQueryKey = (
+  params?: GetApiSongsByIdsParams,
+) => {
+  return [`/api/Songs/by-ids`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetApiSongsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiSongs>>,
+export const getGetApiSongsByIdsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiSongsByIds>>,
   TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>
-  >;
-  axios?: AxiosRequestConfig;
-}) => {
+>(
+  params?: GetApiSongsByIdsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByIds>>,
+        TError,
+        TData
+      >
+    >;
+    axios?: AxiosRequestConfig;
+  },
+) => {
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiSongsQueryKey();
+  const queryKey =
+    queryOptions?.queryKey ?? getGetApiSongsByIdsQueryKey(params);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSongs>>> = ({
-    signal,
-  }) => getApiSongs({ signal, ...axiosOptions });
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getApiSongsByIds>>
+  > = ({ signal }) => getApiSongsByIds(params, { signal, ...axiosOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiSongs>>,
+    Awaited<ReturnType<typeof getApiSongsByIds>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetApiSongsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getApiSongs>>
+export type GetApiSongsByIdsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiSongsByIds>>
 >;
-export type GetApiSongsQueryError = AxiosError<unknown>;
+export type GetApiSongsByIdsQueryError = AxiosError<unknown>;
 
-export function useGetApiSongs<
-  TData = Awaited<ReturnType<typeof getApiSongs>>,
+export function useGetApiSongsByIds<
+  TData = Awaited<ReturnType<typeof getApiSongsByIds>>,
   TError = AxiosError<unknown>,
 >(
+  params: undefined | GetApiSongsByIdsParams,
   options: {
     query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByIds>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiSongs>>,
+          Awaited<ReturnType<typeof getApiSongsByIds>>,
           TError,
-          Awaited<ReturnType<typeof getApiSongs>>
+          Awaited<ReturnType<typeof getApiSongsByIds>>
         >,
         "initialData"
       >;
@@ -959,19 +1121,24 @@ export function useGetApiSongs<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetApiSongs<
-  TData = Awaited<ReturnType<typeof getApiSongs>>,
+export function useGetApiSongsByIds<
+  TData = Awaited<ReturnType<typeof getApiSongsByIds>>,
   TError = AxiosError<unknown>,
 >(
+  params?: GetApiSongsByIdsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByIds>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiSongs>>,
+          Awaited<ReturnType<typeof getApiSongsByIds>>,
           TError,
-          Awaited<ReturnType<typeof getApiSongs>>
+          Awaited<ReturnType<typeof getApiSongsByIds>>
         >,
         "initialData"
       >;
@@ -981,13 +1148,18 @@ export function useGetApiSongs<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetApiSongs<
-  TData = Awaited<ReturnType<typeof getApiSongs>>,
+export function useGetApiSongsByIds<
+  TData = Awaited<ReturnType<typeof getApiSongsByIds>>,
   TError = AxiosError<unknown>,
 >(
+  params?: GetApiSongsByIdsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByIds>>,
+        TError,
+        TData
+      >
     >;
     axios?: AxiosRequestConfig;
   },
@@ -996,13 +1168,18 @@ export function useGetApiSongs<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 
-export function useGetApiSongs<
-  TData = Awaited<ReturnType<typeof getApiSongs>>,
+export function useGetApiSongsByIds<
+  TData = Awaited<ReturnType<typeof getApiSongsByIds>>,
   TError = AxiosError<unknown>,
 >(
+  params?: GetApiSongsByIdsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getApiSongs>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByIds>>,
+        TError,
+        TData
+      >
     >;
     axios?: AxiosRequestConfig;
   },
@@ -1010,7 +1187,7 @@ export function useGetApiSongs<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetApiSongsQueryOptions(options);
+  const queryOptions = getGetApiSongsByIdsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -1022,81 +1199,339 @@ export function useGetApiSongs<
   return query;
 }
 
-export const postApiSongs = (
-  createSongDto: CreateSongDto,
+export const getApiSongsByUserUserId = (
+  userId: number,
+  params?: GetApiSongsByUserUserIdParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<SongModel>> => {
-  return axios.post(`/api/Songs`, createSongDto, options);
+): Promise<AxiosResponse<PagedResultOfSongModel>> => {
+  return axios.get(`/api/Songs/by-user/${userId}`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
 };
 
-export const getPostApiSongsMutationOptions = <
-  TError = AxiosError<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postApiSongs>>,
-    TError,
-    { data: CreateSongDto },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof postApiSongs>>,
-  TError,
-  { data: CreateSongDto },
-  TContext
-> => {
-  const mutationKey = ["postApiSongs"];
-  const { mutation: mutationOptions, axios: axiosOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof postApiSongs>>,
-    { data: CreateSongDto }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return postApiSongs(data, axiosOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
+export const getGetApiSongsByUserUserIdQueryKey = (
+  userId?: number,
+  params?: GetApiSongsByUserUserIdParams,
+) => {
+  return [`/api/Songs/by-user/${userId}`, ...(params ? [params] : [])] as const;
 };
 
-export type PostApiSongsMutationResult = NonNullable<
-  Awaited<ReturnType<typeof postApiSongs>>
->;
-export type PostApiSongsMutationBody = CreateSongDto;
-export type PostApiSongsMutationError = AxiosError<unknown>;
-
-export const usePostApiSongs = <
+export const getGetApiSongsByUserUserIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
   TError = AxiosError<unknown>,
-  TContext = unknown,
 >(
+  userId: number,
+  params?: GetApiSongsByUserUserIdParams,
   options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof postApiSongs>>,
-      TError,
-      { data: CreateSongDto },
-      TContext
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+        TError,
+        TData
+      >
+    >;
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetApiSongsByUserUserIdQueryKey(userId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getApiSongsByUserUserId>>
+  > = ({ signal }) =>
+    getApiSongsByUserUserId(userId, params, { signal, ...axiosOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!userId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetApiSongsByUserUserIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiSongsByUserUserId>>
+>;
+export type GetApiSongsByUserUserIdQueryError = AxiosError<unknown>;
+
+export function useGetApiSongsByUserUserId<
+  TData = Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+  TError = AxiosError<unknown>,
+>(
+  userId: number,
+  params: undefined | GetApiSongsByUserUserIdParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiSongsByUserUserId>>
+        >,
+        "initialData"
+      >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApiSongsByUserUserId<
+  TData = Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+  TError = AxiosError<unknown>,
+>(
+  userId: number,
+  params?: GetApiSongsByUserUserIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiSongsByUserUserId>>
+        >,
+        "initialData"
+      >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApiSongsByUserUserId<
+  TData = Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+  TError = AxiosError<unknown>,
+>(
+  userId: number,
+  params?: GetApiSongsByUserUserIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+        TError,
+        TData
+      >
     >;
     axios?: AxiosRequestConfig;
   },
   queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof postApiSongs>>,
-  TError,
-  { data: CreateSongDto },
-  TContext
-> => {
-  const mutationOptions = getPostApiSongsMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
 };
+
+export function useGetApiSongsByUserUserId<
+  TData = Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+  TError = AxiosError<unknown>,
+>(
+  userId: number,
+  params?: GetApiSongsByUserUserIdParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByUserUserId>>,
+        TError,
+        TData
+      >
+    >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetApiSongsByUserUserIdQueryOptions(
+    userId,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getApiSongsByEvent = (
+  params?: GetApiSongsByEventParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<SongsByEventModel>> => {
+  return axios.get(`/api/Songs/by-event`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const getGetApiSongsByEventQueryKey = (
+  params?: GetApiSongsByEventParams,
+) => {
+  return [`/api/Songs/by-event`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetApiSongsByEventQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiSongsByEvent>>,
+  TError = AxiosError<unknown>,
+>(
+  params?: GetApiSongsByEventParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByEvent>>,
+        TError,
+        TData
+      >
+    >;
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetApiSongsByEventQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getApiSongsByEvent>>
+  > = ({ signal }) => getApiSongsByEvent(params, { signal, ...axiosOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiSongsByEvent>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetApiSongsByEventQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiSongsByEvent>>
+>;
+export type GetApiSongsByEventQueryError = AxiosError<unknown>;
+
+export function useGetApiSongsByEvent<
+  TData = Awaited<ReturnType<typeof getApiSongsByEvent>>,
+  TError = AxiosError<unknown>,
+>(
+  params: undefined | GetApiSongsByEventParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByEvent>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsByEvent>>,
+          TError,
+          Awaited<ReturnType<typeof getApiSongsByEvent>>
+        >,
+        "initialData"
+      >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApiSongsByEvent<
+  TData = Awaited<ReturnType<typeof getApiSongsByEvent>>,
+  TError = AxiosError<unknown>,
+>(
+  params?: GetApiSongsByEventParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByEvent>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSongsByEvent>>,
+          TError,
+          Awaited<ReturnType<typeof getApiSongsByEvent>>
+        >,
+        "initialData"
+      >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetApiSongsByEvent<
+  TData = Awaited<ReturnType<typeof getApiSongsByEvent>>,
+  TError = AxiosError<unknown>,
+>(
+  params?: GetApiSongsByEventParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByEvent>>,
+        TError,
+        TData
+      >
+    >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetApiSongsByEvent<
+  TData = Awaited<ReturnType<typeof getApiSongsByEvent>>,
+  TError = AxiosError<unknown>,
+>(
+  params?: GetApiSongsByEventParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiSongsByEvent>>,
+        TError,
+        TData
+      >
+    >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetApiSongsByEventQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
 
 export const getApiSongsId = (
   id: number,
@@ -1234,6 +1669,82 @@ export function useGetApiSongsId<
 
   return query;
 }
+
+export const postApiSongs = (
+  createSongDto: CreateSongDto,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<SongModel>> => {
+  return axios.post(`/api/Songs`, createSongDto, options);
+};
+
+export const getPostApiSongsMutationOptions = <
+  TError = AxiosError<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiSongs>>,
+    TError,
+    { data: CreateSongDto },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiSongs>>,
+  TError,
+  { data: CreateSongDto },
+  TContext
+> => {
+  const mutationKey = ["postApiSongs"];
+  const { mutation: mutationOptions, axios: axiosOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, axios: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiSongs>>,
+    { data: CreateSongDto }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return postApiSongs(data, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostApiSongsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiSongs>>
+>;
+export type PostApiSongsMutationBody = CreateSongDto;
+export type PostApiSongsMutationError = AxiosError<unknown>;
+
+export const usePostApiSongs = <
+  TError = AxiosError<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof postApiSongs>>,
+      TError,
+      { data: CreateSongDto },
+      TContext
+    >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof postApiSongs>>,
+  TError,
+  { data: CreateSongDto },
+  TContext
+> => {
+  const mutationOptions = getPostApiSongsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 
 export const getApiKaraokeEvents = (
   params?: GetApiKaraokeEventsParams,
@@ -1780,26 +2291,34 @@ export const useDeleteApiKaraokeEventsId = <
   return useMutation(mutationOptions, queryClient);
 };
 
-export const getApiKaraokeEventsIdParticipants = (
-  id: number,
+export const getApiKaraokeEventsParticipants = (
+  params?: GetApiKaraokeEventsParticipantsParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<EventParticipantModel[]>> => {
-  return axios.get(`/api/KaraokeEvents/${id}/participants`, options);
+): Promise<AxiosResponse<EventParticipantsByEventModel[]>> => {
+  return axios.get(`/api/KaraokeEvents/participants`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
 };
 
-export const getGetApiKaraokeEventsIdParticipantsQueryKey = (id?: number) => {
-  return [`/api/KaraokeEvents/${id}/participants`] as const;
+export const getGetApiKaraokeEventsParticipantsQueryKey = (
+  params?: GetApiKaraokeEventsParticipantsParams,
+) => {
+  return [
+    `/api/KaraokeEvents/participants`,
+    ...(params ? [params] : []),
+  ] as const;
 };
 
-export const getGetApiKaraokeEventsIdParticipantsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+export const getGetApiKaraokeEventsParticipantsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params?: GetApiKaraokeEventsParticipantsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
         TError,
         TData
       >
@@ -1810,48 +2329,44 @@ export const getGetApiKaraokeEventsIdParticipantsQueryOptions = <
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetApiKaraokeEventsIdParticipantsQueryKey(id);
+    queryOptions?.queryKey ??
+    getGetApiKaraokeEventsParticipantsQueryKey(params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>
+    Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>
   > = ({ signal }) =>
-    getApiKaraokeEventsIdParticipants(id, { signal, ...axiosOptions });
+    getApiKaraokeEventsParticipants(params, { signal, ...axiosOptions });
 
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!id,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetApiKaraokeEventsIdParticipantsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>
+export type GetApiKaraokeEventsParticipantsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>
 >;
-export type GetApiKaraokeEventsIdParticipantsQueryError = AxiosError<unknown>;
+export type GetApiKaraokeEventsParticipantsQueryError = AxiosError<unknown>;
 
-export function useGetApiKaraokeEventsIdParticipants<
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+export function useGetApiKaraokeEventsParticipants<
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params: undefined | GetApiKaraokeEventsParticipantsParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+          Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
           TError,
-          Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>
+          Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>
         >,
         "initialData"
       >;
@@ -1861,24 +2376,24 @@ export function useGetApiKaraokeEventsIdParticipants<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetApiKaraokeEventsIdParticipants<
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+export function useGetApiKaraokeEventsParticipants<
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params?: GetApiKaraokeEventsParticipantsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+          Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
           TError,
-          Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>
+          Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>
         >,
         "initialData"
       >;
@@ -1888,15 +2403,15 @@ export function useGetApiKaraokeEventsIdParticipants<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetApiKaraokeEventsIdParticipants<
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+export function useGetApiKaraokeEventsParticipants<
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params?: GetApiKaraokeEventsParticipantsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
         TError,
         TData
       >
@@ -1908,15 +2423,15 @@ export function useGetApiKaraokeEventsIdParticipants<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 
-export function useGetApiKaraokeEventsIdParticipants<
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+export function useGetApiKaraokeEventsParticipants<
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params?: GetApiKaraokeEventsParticipantsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdParticipants>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsParticipants>>,
         TError,
         TData
       >
@@ -1927,8 +2442,8 @@ export function useGetApiKaraokeEventsIdParticipants<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetApiKaraokeEventsIdParticipantsQueryOptions(
-    id,
+  const queryOptions = getGetApiKaraokeEventsParticipantsQueryOptions(
+    params,
     options,
   );
 
@@ -1942,26 +2457,34 @@ export function useGetApiKaraokeEventsIdParticipants<
   return query;
 }
 
-export const getApiKaraokeEventsIdSongProposals = (
-  id: number,
+export const getApiKaraokeEventsSongProposals = (
+  params?: GetApiKaraokeEventsSongProposalsParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<SongProposalModel[]>> => {
-  return axios.get(`/api/KaraokeEvents/${id}/songProposals`, options);
+): Promise<AxiosResponse<SongProposalsByEventModel[]>> => {
+  return axios.get(`/api/KaraokeEvents/songProposals`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
 };
 
-export const getGetApiKaraokeEventsIdSongProposalsQueryKey = (id?: number) => {
-  return [`/api/KaraokeEvents/${id}/songProposals`] as const;
+export const getGetApiKaraokeEventsSongProposalsQueryKey = (
+  params?: GetApiKaraokeEventsSongProposalsParams,
+) => {
+  return [
+    `/api/KaraokeEvents/songProposals`,
+    ...(params ? [params] : []),
+  ] as const;
 };
 
-export const getGetApiKaraokeEventsIdSongProposalsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+export const getGetApiKaraokeEventsSongProposalsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params?: GetApiKaraokeEventsSongProposalsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
         TError,
         TData
       >
@@ -1972,48 +2495,44 @@ export const getGetApiKaraokeEventsIdSongProposalsQueryOptions = <
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetApiKaraokeEventsIdSongProposalsQueryKey(id);
+    queryOptions?.queryKey ??
+    getGetApiKaraokeEventsSongProposalsQueryKey(params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>
+    Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>
   > = ({ signal }) =>
-    getApiKaraokeEventsIdSongProposals(id, { signal, ...axiosOptions });
+    getApiKaraokeEventsSongProposals(params, { signal, ...axiosOptions });
 
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!id,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetApiKaraokeEventsIdSongProposalsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>
+export type GetApiKaraokeEventsSongProposalsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>
 >;
-export type GetApiKaraokeEventsIdSongProposalsQueryError = AxiosError<unknown>;
+export type GetApiKaraokeEventsSongProposalsQueryError = AxiosError<unknown>;
 
-export function useGetApiKaraokeEventsIdSongProposals<
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+export function useGetApiKaraokeEventsSongProposals<
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params: undefined | GetApiKaraokeEventsSongProposalsParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+          Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
           TError,
-          Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>
+          Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>
         >,
         "initialData"
       >;
@@ -2023,24 +2542,24 @@ export function useGetApiKaraokeEventsIdSongProposals<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetApiKaraokeEventsIdSongProposals<
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+export function useGetApiKaraokeEventsSongProposals<
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params?: GetApiKaraokeEventsSongProposalsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+          Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
           TError,
-          Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>
+          Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>
         >,
         "initialData"
       >;
@@ -2050,15 +2569,15 @@ export function useGetApiKaraokeEventsIdSongProposals<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetApiKaraokeEventsIdSongProposals<
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+export function useGetApiKaraokeEventsSongProposals<
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params?: GetApiKaraokeEventsSongProposalsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
         TError,
         TData
       >
@@ -2070,15 +2589,15 @@ export function useGetApiKaraokeEventsIdSongProposals<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 
-export function useGetApiKaraokeEventsIdSongProposals<
-  TData = Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+export function useGetApiKaraokeEventsSongProposals<
+  TData = Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
   TError = AxiosError<unknown>,
 >(
-  id: number,
+  params?: GetApiKaraokeEventsSongProposalsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiKaraokeEventsIdSongProposals>>,
+        Awaited<ReturnType<typeof getApiKaraokeEventsSongProposals>>,
         TError,
         TData
       >
@@ -2089,8 +2608,8 @@ export function useGetApiKaraokeEventsIdSongProposals<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetApiKaraokeEventsIdSongProposalsQueryOptions(
-    id,
+  const queryOptions = getGetApiKaraokeEventsSongProposalsQueryOptions(
+    params,
     options,
   );
 

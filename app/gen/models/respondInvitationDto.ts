@@ -4,20 +4,16 @@
  * karaoke-place | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { RespondInvitationDtoHostUserId } from "./respondInvitationDtoHostUserId";
-import type { RespondInvitationDtoUserId } from "./respondInvitationDtoUserId";
 
 export interface RespondInvitationDto {
   /**
    * @minimum 1
    * @maximum 2147483647
-   * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  hostUserId?: RespondInvitationDtoHostUserId;
+  hostUserId?: number;
   /**
    * @minimum 1
    * @maximum 2147483647
-   * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  userId?: RespondInvitationDtoUserId;
+  userId?: number;
 }

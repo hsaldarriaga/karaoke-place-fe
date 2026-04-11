@@ -4,22 +4,14 @@
  * karaoke-place | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { SongProposalModelId } from "./songProposalModelId";
-import type { SongProposalModelEventId } from "./songProposalModelEventId";
-import type { SongProposalModelUserId } from "./songProposalModelUserId";
-import type { SongProposalModelSongId } from "./songProposalModelSongId";
-import type { SongProposalModelOrder } from "./songProposalModelOrder";
+import type { SongModel } from "./songModel";
 
 export interface SongProposalModel {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  id?: SongProposalModelId;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  eventId?: SongProposalModelEventId;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  userId?: SongProposalModelUserId;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  songId?: SongProposalModelSongId;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  order?: SongProposalModelOrder;
-  createdAt?: string;
+  id: number;
+  eventId: number;
+  userId: number;
+  songId: number;
+  order: number;
+  createdAt: string;
+  song: SongModel;
 }

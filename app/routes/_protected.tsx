@@ -1,7 +1,8 @@
-import { Navigate, Outlet, useLocation } from "react-router";
+import { Navigate, useLocation } from "react-router";
 
-import { AuthActionState } from "../components/auth-action-state";
-import { useAppAuth } from "../lib/auth";
+import { AuthActionState } from "~/components/auth-action-state";
+import { HomeLayout } from "~/modules/home/home-page";
+import { useAppAuth } from "~/lib/auth";
 
 export default function ProtectedLayout() {
   const location = useLocation();
@@ -27,5 +28,5 @@ export default function ProtectedLayout() {
     );
   }
 
-  return <Outlet />;
+  return <HomeLayout />;
 }

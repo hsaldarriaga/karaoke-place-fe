@@ -4,19 +4,15 @@
  * karaoke-place | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { KaraokeEventId } from "./karaokeEventId";
-import type { KaraokeEventCreatedByUserId } from "./karaokeEventCreatedByUserId";
 
 export interface KaraokeEvent {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  id?: KaraokeEventId;
-  name?: string;
-  description?: string;
-  location?: string;
-  startTime?: string;
-  endTime?: string;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  createdByUserId?: KaraokeEventCreatedByUserId;
-  isActive?: boolean;
-  createdAt?: string;
+  id: number;
+  name: string;
+  description: string;
+  location: string;
+  startTime: string;
+  endTime: string;
+  createdByUserId: number;
+  isActive: boolean;
+  createdAt: string;
 }

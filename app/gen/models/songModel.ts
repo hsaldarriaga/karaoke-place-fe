@@ -4,12 +4,10 @@
  * karaoke-place | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { SongModelId } from "./songModelId";
 
 export interface SongModel {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  id?: SongModelId;
-  externalId?: string;
-  title?: string;
-  artist?: string;
+  id: number;
+  externalId: string;
+  title: string;
+  artist: string;
 }

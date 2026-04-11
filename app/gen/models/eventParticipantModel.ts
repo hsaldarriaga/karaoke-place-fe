@@ -4,20 +4,14 @@
  * karaoke-place | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { EventParticipantModelId } from "./eventParticipantModelId";
-import type { EventParticipantModelEventId } from "./eventParticipantModelEventId";
-import type { EventParticipantModelUserId } from "./eventParticipantModelUserId";
 import type { ParticipantRole } from "./participantRole";
 import type { ParticipantStatus } from "./participantStatus";
 
 export interface EventParticipantModel {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  id?: EventParticipantModelId;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  eventId?: EventParticipantModelEventId;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  userId?: EventParticipantModelUserId;
-  role?: ParticipantRole;
-  status?: ParticipantStatus;
-  createdAt?: string;
+  id: number;
+  eventId: number;
+  userId: number;
+  role: ParticipantRole;
+  status: ParticipantStatus;
+  createdAt: string;
 }

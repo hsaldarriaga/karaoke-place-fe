@@ -1,4 +1,4 @@
-import { useAppAuth } from "../lib/auth";
+import { useAppAuth } from "~/lib/auth";
 
 export function Welcome() {
   const { error, isAuthenticated, isConfigured, isLoading, user } =
@@ -41,7 +41,8 @@ export function Welcome() {
             <pre className="mt-4 overflow-x-auto rounded-2xl bg-slate-950/70 p-4 text-sm text-cyan-200">
               {`VITE_AUTH0_DOMAIN=your-tenant.us.auth0.com
 VITE_AUTH0_CLIENT_ID=your-client-id
-HOSTNAME=https://localhost:8080
+VITE_HOSTNAME=https://localhost:8080
+VITE_API_BASE_URL=http://localhost:3000
 VITE_AUTH0_AUDIENCE=your-api-identifier`}
             </pre>
           </section>

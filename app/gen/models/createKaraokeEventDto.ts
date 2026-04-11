@@ -5,7 +5,6 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { CreateKaraokeEventDtoDescription } from "./createKaraokeEventDtoDescription";
-import type { CreateKaraokeEventDtoCreatedByUserId } from "./createKaraokeEventDtoCreatedByUserId";
 import type { CreateKaraokeEventDtoIsActive } from "./createKaraokeEventDtoIsActive";
 
 export interface CreateKaraokeEventDto {
@@ -29,8 +28,7 @@ export interface CreateKaraokeEventDto {
   /**
    * @minimum 1
    * @maximum 2147483647
-   * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  createdByUserId?: CreateKaraokeEventDtoCreatedByUserId;
+  createdByUserId?: number;
   isActive?: CreateKaraokeEventDtoIsActive;
 }

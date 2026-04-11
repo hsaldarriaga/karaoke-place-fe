@@ -1,3 +1,5 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -8,7 +10,8 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import { AppAuthProvider } from "./lib/auth";
+import { TooltipProvider } from "~/components/ui/tooltip";
+import { AppAuthProvider } from "~/lib/auth";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => [
@@ -43,10 +46,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 30_000,
+            refetchOnWindowFocus: false,
+          },
+        },
+      }),
+  );
+
   return (
-    <AppAuthProvider>
-      <Outlet />
-    </AppAuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AppAuthProvider>
+          <Outlet />
+        </AppAuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 

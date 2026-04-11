@@ -4,11 +4,9 @@
  * karaoke-place | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { UserModelId } from "./userModelId";
 
 export interface UserModel {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  id?: UserModelId;
-  email?: string;
-  createdAt?: string;
+  id: number;
+  email: string;
+  createdAt: string;
 }

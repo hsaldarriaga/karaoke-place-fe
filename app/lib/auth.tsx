@@ -5,7 +5,7 @@ import {
   useAuth0,
 } from "@auth0/auth0-react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { setTokenGetter } from "./api-client";
+import { setTokenGetter } from "~/lib/api-client";
 
 type AuthContextValue = {
   isConfigured: boolean;
@@ -136,7 +136,9 @@ export function AppAuthProvider({ children }: { children: React.ReactNode }) {
       }}
       onRedirectCallback={(appState?: AppState) => {
         const nextPath = getSafeReturnTo(
-          typeof appState?.returnTo === "string" ? appState.returnTo : undefined,
+          typeof appState?.returnTo === "string"
+            ? appState.returnTo
+            : undefined,
         );
 
         window.history.replaceState({}, document.title, nextPath);

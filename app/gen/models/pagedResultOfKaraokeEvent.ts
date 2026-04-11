@@ -4,20 +4,12 @@
  * karaoke-place | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { PagedResultOfKaraokeEventPage } from "./pagedResultOfKaraokeEventPage";
-import type { PagedResultOfKaraokeEventPageSize } from "./pagedResultOfKaraokeEventPageSize";
-import type { PagedResultOfKaraokeEventTotalCount } from "./pagedResultOfKaraokeEventTotalCount";
-import type { PagedResultOfKaraokeEventTotalPages } from "./pagedResultOfKaraokeEventTotalPages";
 import type { KaraokeEvent } from "./karaokeEvent";
 
 export interface PagedResultOfKaraokeEvent {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  page?: PagedResultOfKaraokeEventPage;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  pageSize?: PagedResultOfKaraokeEventPageSize;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  totalCount?: PagedResultOfKaraokeEventTotalCount;
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  totalPages?: PagedResultOfKaraokeEventTotalPages;
-  items?: KaraokeEvent[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages?: number;
+  items: KaraokeEvent[];
 }

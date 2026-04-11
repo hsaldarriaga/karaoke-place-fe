@@ -10,13 +10,11 @@ export type GetApiKaraokeEventsParams = {
   /**
    * @minimum 1
    * @maximum 2147483647
-   * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  Page?: number | string;
+  Page?: number;
   /**
    * @minimum 1
    * @maximum 100
-   * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  PageSize?: number | string;
+  PageSize?: number;
 };
