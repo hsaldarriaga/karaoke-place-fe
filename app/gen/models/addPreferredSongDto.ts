@@ -7,8 +7,18 @@
 
 export interface AddPreferredSongDto {
   /**
-   * @minimum 1
-   * @maximum 2147483647
+   * @minLength 1
+   * @maxLength 255
    */
-  songId?: number;
+  externalId: string;
+  /**
+   * @minLength 1
+   * @maxLength 500
+   */
+  title: string;
+  /**
+   * @minLength 1
+   * @maxLength 500
+   */
+  artist: string;
 }

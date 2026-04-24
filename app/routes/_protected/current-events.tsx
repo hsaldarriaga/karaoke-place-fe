@@ -1,4 +1,4 @@
-import { CurrentEventsSection } from "~/modules/home/components/current-events-section";
+import { CurrentEventsSection } from "~/modules/home/current-events/current-events-section";
 import { useCurrentEvents } from "~/modules/home/hooks/use-current-events";
 
 export function meta() {

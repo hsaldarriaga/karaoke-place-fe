@@ -16,14 +16,14 @@ export function meta(_args: Route.MetaArgs) {
 
 export default function LogoutPage() {
   const { error, isLoading, logoutUser } = useAppAuth();
-  const hasTriggered = useRef(false);
+  const hasTriggeredRef = useRef(false);
 
   useEffect(() => {
-    if (hasTriggered.current || isLoading) {
+    if (hasTriggeredRef.current || isLoading) {
       return;
     }
 
-    hasTriggered.current = true;
+    hasTriggeredRef.current = true;
     logoutUser();
   }, [isLoading, logoutUser]);
 

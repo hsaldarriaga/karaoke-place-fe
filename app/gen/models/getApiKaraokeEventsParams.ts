@@ -7,6 +7,8 @@
 
 export type GetApiKaraokeEventsParams = {
   isActive?: boolean;
+  createdByUserId?: number;
+  participantUserId?: number;
   /**
    * @minimum 1
    * @maximum 2147483647

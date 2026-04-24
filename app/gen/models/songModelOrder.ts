@@ -5,9 +5,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface UserModel {
-  id: number;
-  email: string;
-  firstName: string;
-  createdAt: string;
-}
+export type SongModelOrder = null | number;

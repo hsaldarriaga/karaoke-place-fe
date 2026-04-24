@@ -1,10 +1,10 @@
 import { Outlet, useLocation } from "react-router";
 
+import { HomeHeader } from "~/components/home/home-header";
+import { HomeSidebar } from "~/components/home/home-sidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 import { useAppAuth } from "~/lib/auth";
 
-import { HomeHeader } from "./components/home-header";
-import { HomeSidebar } from "./components/home-sidebar";
 import type { HomeSection } from "./types";
 
 function getActiveSection(pathname: string): HomeSection {

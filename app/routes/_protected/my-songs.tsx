@@ -1,4 +1,4 @@
-import { MySongsSection } from "~/modules/home/components/my-songs-section";
+import { MySongsSection } from "~/modules/home/my-songs/my-songs-section";
 import { useCurrentUser } from "~/modules/home/hooks/use-current-user";
 import { useMySongs } from "~/modules/home/hooks/use-my-songs";
 

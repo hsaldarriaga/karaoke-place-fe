@@ -4,7 +4,6 @@ export type HomeSection = "current-events" | "my-events" | "my-songs";
 
 export type EnrichedKaraokeEvent = KaraokeEvent & {
   participantCount: number;
-  participantUserIds: number[];
   previewSongs: SongModel[];
   proposalCount: number;
 };
@@ -14,4 +13,12 @@ export type CurrentEventsPage = {
   page?: number | string;
   totalPages?: number | string;
   totalCount?: number | string;
+};
+
+export type PaginationState = {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  canGoPrevious: boolean;
+  canGoNext: boolean;
 };

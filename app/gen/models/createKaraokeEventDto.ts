@@ -23,8 +23,17 @@ export interface CreateKaraokeEventDto {
    * @maxLength 300
    */
   location: string;
+  /**
+   * @minLength 0
+   * @maxLength 300
+   */
+  coordinates: string;
   startTime: string;
-  endTime: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  hours?: number;
   /**
    * @minimum 1
    * @maximum 2147483647

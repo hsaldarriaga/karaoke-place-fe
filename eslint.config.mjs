@@ -1,6 +1,6 @@
 import js from "@eslint/js";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
-import reactHooks from "eslint-plugin-react-hooks";
+import eslintReact from "@eslint-react/eslint-plugin";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
@@ -12,6 +12,7 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    extends: [eslintReact.configs["recommended-typescript"]],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -25,11 +26,7 @@ export default tseslint.config(
         ...globals.node,
       },
     },
-    plugins: {
-      "react-hooks": reactHooks,
-    },
     rules: {
-      ...reactHooks.configs.recommended.rules,
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },

@@ -5,9 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface UserModel {
-  id: number;
-  email: string;
-  firstName: string;
-  createdAt: string;
+export interface ParticipantCountByEventModel {
+  eventId: number;
+  count: number;
 }

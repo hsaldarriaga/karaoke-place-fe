@@ -1,14 +1,25 @@
-import type { RefObject } from "react";
+import { useState, type RefObject } from "react";
 import type {
   InfiniteData,
   UseInfiniteQueryResult,
 } from "@tanstack/react-query";
 
+import { EmptyState } from "~/components/home/empty-state";
+import { EventsList } from "~/components/home/events-list";
 import { Button } from "~/components/ui/button";
+import { EventDetailSheet } from "~/modules/home/current-events/event-detail-sheet";
 
-import type { CurrentEventsPage, EnrichedKaraokeEvent } from "../types";
-import { EmptyState } from "./empty-state";
-import { EventCard } from "./event-card";
+import type {
+  CurrentEventsPage,
+  EnrichedKaraokeEvent,
+} from "~/modules/home/types";
+
+const EVENT_LIST_SKELETON_KEYS = [
+  "current-event-skeleton-1",
+  "current-event-skeleton-2",
+  "current-event-skeleton-3",
+  "current-event-skeleton-4",
+];
 
 type CurrentEventsSectionProps = {
   query: UseInfiniteQueryResult<InfiniteData<CurrentEventsPage>, Error>;
@@ -21,6 +32,9 @@ export function CurrentEventsSection({
   allEvents,
   loadMoreRef,
 }: CurrentEventsSectionProps) {
+  const [selectedEvent, setSelectedEvent] =
+    useState<EnrichedKaraokeEvent | null>(null);
+
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3">
@@ -38,13 +52,16 @@ export function CurrentEventsSection({
       </div>
 
       {query.isPending ? (
-        <div className="grid gap-4 xl:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-64 animate-pulse rounded-3xl border border-zinc-200 bg-white"
-            />
-          ))}
+        <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm shadow-black/5">
+          <ul className="divide-y divide-zinc-200">
+            {EVENT_LIST_SKELETON_KEYS.map((key) => (
+              <li key={key} className="space-y-3 px-5 py-4">
+                <div className="h-5 w-48 animate-pulse rounded bg-zinc-200" />
+                <div className="h-4 w-full animate-pulse rounded bg-zinc-100" />
+                <div className="h-4 w-2/3 animate-pulse rounded bg-zinc-100" />
+              </li>
+            ))}
+          </ul>
         </div>
       ) : query.isError ? (
         <EmptyState
@@ -62,11 +79,7 @@ export function CurrentEventsSection({
         />
       ) : (
         <>
-          <div className="grid gap-4 xl:grid-cols-2">
-            {allEvents.map((event) => (
-              <EventCard key={event.id.toString()} event={event} />
-            ))}
-          </div>
+          <EventsList events={allEvents} onEventClick={setSelectedEvent} />
 
           <div
             ref={loadMoreRef}
@@ -96,6 +109,14 @@ export function CurrentEventsSection({
           </div>
         </>
       )}
+
+      <EventDetailSheet
+        event={selectedEvent}
+        open={selectedEvent !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedEvent(null);
+        }}
+      />
     </div>
   );
 }

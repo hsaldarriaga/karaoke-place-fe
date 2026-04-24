@@ -1,5 +1,5 @@
-import type { EnrichedKaraokeEvent } from "../types";
-import { formatDateRange } from "../utils";
+import type { EnrichedKaraokeEvent } from "~/modules/home/types";
+import { formatDateRange } from "~/modules/home/utils";
 
 export function EventCard({ event }: { event: EnrichedKaraokeEvent }) {
   const previewSongs = event.previewSongs.slice(0, 3);
@@ -39,7 +39,7 @@ export function EventCard({ event }: { event: EnrichedKaraokeEvent }) {
             Date
           </dt>
           <dd className="mt-1 text-sm font-medium text-zinc-900">
-            {formatDateRange(event.startTime, event.endTime)}
+            {formatDateRange(event.startTime, event.hours)}
           </dd>
         </div>
         <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-3">

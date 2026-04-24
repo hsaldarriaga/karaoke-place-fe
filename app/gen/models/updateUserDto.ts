@@ -11,4 +11,9 @@ export interface UpdateUserDto {
    * @maxLength 200
    */
   email: string;
+  /**
+   * @minLength 0
+   * @maxLength 200
+   */
+  firstName: string;
 }

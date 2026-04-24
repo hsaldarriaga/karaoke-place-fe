@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -10,9 +10,12 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import { Toaster } from "~/components/ui/sonner";
 import { TooltipProvider } from "~/components/ui/tooltip";
 import { AppAuthProvider } from "~/lib/auth";
 import "./app.css";
+
+import { setOptions } from "@googlemaps/js-api-loader";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -57,11 +60,26 @@ export default function App() {
         },
       }),
   );
+
+  useEffect(() => {
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+    if (!apiKey) {
+      return;
+    }
+
+    setOptions({
+      key: apiKey,
+      v: "beta",
+    });
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AppAuthProvider>
           <Outlet />
+          <Toaster richColors />
         </AppAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

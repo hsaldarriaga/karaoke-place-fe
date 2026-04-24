@@ -4,15 +4,9 @@ import {
   type User,
   useAuth0,
 } from "@auth0/auth0-react";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
+import { createContext, use, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { setTokenGetter } from "~/lib/api-client";
+import { useConfigureAxios } from "~/lib/api-client";
 
 type AuthContextValue = {
   isLoading: boolean;
@@ -58,14 +52,7 @@ function AuthContextBridge({
 
   // Register / unregister the token getter so the axios interceptor can
   // attach a Bearer token to every outgoing request.
-  useEffect(() => {
-    if (isAuthenticated) {
-      setTokenGetter(() => getAccessTokenSilently());
-    } else {
-      setTokenGetter(null);
-    }
-    return () => setTokenGetter(null);
-  }, [isAuthenticated, getAccessTokenSilently]);
+  useConfigureAxios(isAuthenticated ? getAccessTokenSilently : null);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -98,7 +85,7 @@ function AuthContextBridge({
     ],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext value={value}>{children}</AuthContext>;
 }
 
 export function AppAuthProvider({ children }: { children: React.ReactNode }) {
@@ -139,5 +126,5 @@ export function AppAuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAppAuth() {
-  return useContext(AuthContext);
+  return use(AuthContext);
 }

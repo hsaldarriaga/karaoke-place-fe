@@ -2,17 +2,25 @@ function isValidDate(value: Date | null): value is Date {
   return value instanceof Date && !Number.isNaN(value.getTime());
 }
 
-export function formatDateRange(startTime?: string, endTime?: string): string {
-  if (!startTime && !endTime) {
+export function formatDateRange(
+  startTime?: string,
+  hours?: number | string,
+): string {
+  if (!startTime) {
     return "Date to be announced";
   }
 
-  const start = startTime ? new Date(startTime) : null;
-  const end = endTime ? new Date(endTime) : null;
+  const start = new Date(startTime);
 
-  if (!isValidDate(start) && !isValidDate(end)) {
+  if (!isValidDate(start)) {
     return "Date to be announced";
   }
+
+  const parsedHours = typeof hours === "string" ? Number(hours) : hours;
+  const end =
+    Number.isFinite(parsedHours) && (parsedHours ?? 0) > 0
+      ? new Date(start.getTime() + Number(parsedHours) * 60 * 60 * 1000)
+      : null;
 
   const dateFormatter = new Intl.DateTimeFormat("en", {
     month: "short",
@@ -25,7 +33,7 @@ export function formatDateRange(startTime?: string, endTime?: string): string {
     minute: "2-digit",
   });
 
-  if (isValidDate(start) && isValidDate(end)) {
+  if (isValidDate(end)) {
     const sameDay = start.toDateString() === end.toDateString();
 
     return sameDay
@@ -33,5 +41,5 @@ export function formatDateRange(startTime?: string, endTime?: string): string {
       : `${dateFormatter.format(start)} → ${dateFormatter.format(end)}`;
   }
 
-  return dateFormatter.format(start ?? end ?? new Date());
+  return dateFormatter.format(start);
 }

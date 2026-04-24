@@ -11,9 +11,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
-
-import { NAV_ITEMS } from "../constants";
-import type { HomeSection } from "../types";
+import { NAV_ITEMS } from "~/modules/home/constants";
+import type { HomeSection } from "~/modules/home/types";
 
 type HomeSidebarProps = {
   activeSection: HomeSection;

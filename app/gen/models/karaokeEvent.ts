@@ -10,8 +10,9 @@ export interface KaraokeEvent {
   name: string;
   description: string;
   location: string;
+  coordinates: string;
   startTime: string;
-  endTime: string;
+  hours: number;
   createdByUserId: number;
   isActive: boolean;
   createdAt: string;
