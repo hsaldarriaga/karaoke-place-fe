@@ -5,4 +5,11 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type ParticipantStatus = number;
+export type ParticipantStatus =
+  (typeof ParticipantStatus)[keyof typeof ParticipantStatus];
+
+export const ParticipantStatus = {
+  Invited: "Invited",
+  Accepted: "Accepted",
+  Rejected: "Rejected",
+} as const;

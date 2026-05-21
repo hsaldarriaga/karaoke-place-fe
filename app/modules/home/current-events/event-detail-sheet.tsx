@@ -13,21 +13,19 @@ import {
 } from "~/components/ui/sheet";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
+import {
+  ParticipantStatus,
+  type ParticipantStatus as ParticipantStatusValue,
+} from "~/gen/models";
 import { useCurrentUser } from "~/modules/home/hooks/use-current-user";
 import { formatDateRange } from "~/modules/home/utils";
 import type { EnrichedKaraokeEvent } from "~/modules/home/types";
 import { useQueryClient } from "@tanstack/react-query";
 
-const PARTICIPANT_STATUS = {
-  Invited: 0,
-  Accepted: 1,
-  Rejected: 2,
-} as const;
-
-const PARTICIPANT_STATUS_LABEL: Record<number, string> = {
-  [PARTICIPANT_STATUS.Invited]: "Invited",
-  [PARTICIPANT_STATUS.Accepted]: "Accepted",
-  [PARTICIPANT_STATUS.Rejected]: "Rejected",
+const PARTICIPANT_STATUS_LABEL: Record<ParticipantStatusValue, string> = {
+  [ParticipantStatus.Invited]: "Invited",
+  [ParticipantStatus.Accepted]: "Accepted",
+  [ParticipantStatus.Rejected]: "Rejected",
 };
 
 type EventDetailSheetProps = {
@@ -178,7 +176,7 @@ export function EventDetailSheet({
                       </div>
 
                       {isOwner &&
-                        participant.status === PARTICIPANT_STATUS.Invited && (
+                        participant.status === ParticipantStatus.Invited && (
                           <div className="flex gap-1.5">
                             <Button
                               size="sm"
@@ -280,7 +278,7 @@ export function EventDetailSheet({
           {/* Join button for non-owners who aren't participants */}
           {!isOwner && !isParticipant && currentUserId !== undefined && (
             <>
-              <Separator />
+              <Separator className="my-4" />
               <Button
                 className="w-full"
                 disabled={enterMutation.isPending}
@@ -300,7 +298,7 @@ export function EventDetailSheet({
 
           {!isOwner && isParticipant && (
             <>
-              <Separator />
+              <Separator className="my-4" />
               <p className="text-center text-sm text-zinc-500">
                 You&apos;re on the list{" "}
                 {myParticipation?.status !== undefined

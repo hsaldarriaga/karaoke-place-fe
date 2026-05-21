@@ -5,4 +5,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type ParticipantRole = number;
+export type ParticipantRole =
+  (typeof ParticipantRole)[keyof typeof ParticipantRole];
+
+export const ParticipantRole = {
+  Host: "Host",
+  Participant: "Participant",
+} as const;
